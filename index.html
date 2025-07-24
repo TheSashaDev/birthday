@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- MODIFICATION: Added translate="no" to prevent automatic translation -->
+<html lang="en" translate="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- MODIFICATION: Added meta tag to specifically tell Google not to translate -->
+    <meta name="google" content="notranslate">
     <title>A Birthday Surprise for Olena Leonidivna</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
@@ -32,6 +35,17 @@
             align-items: center;
             overflow: hidden;
             perspective: 1500px;
+
+            /* --- MODIFICATIONS START --- */
+            /* Prevent text selection */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            
+            /* Keep the default cursor instead of the text I-beam */
+            cursor: default;
+            /* --- MODIFICATIONS END --- */
         }
 
         .background-particles {
@@ -73,7 +87,7 @@
         /* --- Envelope Wrapper --- */
         .envelope-wrapper {
             position: absolute;
-            cursor: pointer;
+            cursor: pointer; /* This will override the body's 'cursor: default' */
             width: 450px;
             height: 300px;
             transform-style: preserve-3d;
@@ -254,7 +268,7 @@
             border-radius: 50%;
             font-size: 24px;
             color: white;
-            cursor: pointer;
+            cursor: pointer; /* This will override the body's 'cursor: default' */
             transition: all 0.3s ease;
             z-index: 100;
             opacity: 0;
@@ -326,18 +340,6 @@
 
     <!-- Hidden audio element for background music -->
     <audio id="backgroundMusic" preload="auto" loop>
-        <!-- 
-            IMPORTANT: Cloud storage links (like Google Drive or Dropbox shared links) 
-            are generally NOT reliable for direct audio playback in web pages 
-            due to cross-origin policies and serving limitations.
-            
-            This Dropbox URL is modified with '?dl=1' which sometimes helps, 
-            but it might still be blocked by browsers or trigger a download.
-            
-            For robust and reliable playback, it is HIGHLY RECOMMENDED to host your MP3 file 
-            on a proper web server, GitHub Pages, or a CDN.
-            Replace the 'src' attribute below with your direct audio file URL if you host it elsewhere.
-        -->
         <source src="https://www.dropbox.com/scl/fi/b6aqcx5ydpjnqfrrrrrsr/Happy-Birthday-to-you.mp3?rlkey=0dz3gvqc8p3qi91h3rrxliqsa&st=25y50wcv&dl=1" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
