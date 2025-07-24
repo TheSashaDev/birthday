@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Birthday Surprise for Olena Leonidivna</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+        
+        :root {
+            --primary-color: #d8b4fe; /* Light Purple */
+            --secondary-color: #fecdd3; /* Light Pink */
+            --accent-color: #fbbf24;   /* Amber/Gold */
+            --text-color: #382e4f;
+            --paper-color-base: #fffaf0; /* Floral White - good for general paper */
+            --aged-paper-color: #fdf6e3; /* Warm, creamy tone for old paper */
+            --envelope-body-color: #fce7f3; /* Pink Tint */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #a78bfa, #c084fc);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 1500px;
+        }
+
+        .background-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) translateX(0px); opacity: 0; }
+            25% { opacity: 0.5; }
+            50% { transform: translateY(-100vh) translateX(50px); opacity: 0.7; }
+            75% { opacity: 0.5; }
+            100% { transform: translateY(0px) translateX(0px); opacity: 0; }
+        }
+        
+        .container {
+            position: relative;
+            width: 450px;
+            height: 320px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.5s ease-out;
+            z-index: 10;
+        }
+
+        /* --- Envelope Wrapper --- */
+        .envelope-wrapper {
+            position: absolute;
+            cursor: pointer;
+            width: 450px;
+            height: 300px;
+            transform-style: preserve-3d;
+            transition: all 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--envelope-body-color);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2), 
+                        0 0 0 1px #ffffff44 inset;
+        }
+        
+        .envelope::before { /* Front panel of envelope */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(150deg, var(--envelope-body-color), #fbcfe8);
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0 50%, 50% 50%, 0 50%);
+            border-radius: 10px;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(-150deg, var(--secondary-color), var(--primary-color));
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform-origin: top;
+            transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 15;
+        }
+
+        .seal {
+            position: absolute;
+            top: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, var(--accent-color), #d97706);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-family: 'Dancing Script', cursive;
+            box-shadow: 0 5px 15px rgba(217, 119, 6, 0.5), 0 0 0 3px #ffffff88;
+            z-index: 16;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .click-prompt {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.8);
+            font-weight: 300;
+            letter-spacing: 1px;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        /* --- Letter --- */
+        .letter {
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            background: var(--paper-color-base); /* Base paper color for the letter */
+            border-radius: 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            padding: 30px;
+            overflow-y: auto;
+            transform: translateY(150px) scale(0.3);
+            opacity: 0;
+            z-index: 5;
+            transition: all 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-origin: top center;
+        }
+
+        .letter-header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 20px;
+        }
+        
+        .letter-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 48px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .letter-subtitle {
+            font-size: 20px;
+            color: #8b5cf6;
+            font-weight: 400;
+            margin-top: 5px;
+        }
+        
+        .letter-content {
+            /* General text alignment is centered, but overridden for .birthday-wishes */
+            text-align: center; 
+            line-height: 1.9;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+        
+        .birthday-wishes {
+            margin: 20px 0;
+            padding: 25px 30px; /* Increased padding slightly for more space */
+            text-align: left; /* Ensure it's left-aligned for handwritten look */
+            font-family: 'Dancing Script', cursive; /* Apply handwritten font here */
+            font-size: 20px; /* Adjusted size for cursive font readability */
+            line-height: 1.6; /* Adjusted line height for cursive font */
+            color: var(--text-color);
+            
+            /* --- Old Paper Styles --- */
+            background-color: var(--aged-paper-color); /* A warm, creamy paper color */
+            
+            /* Subtle gradients to simulate discoloration/texture */
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(255, 200, 150, 0.1) 0%, transparent 70%),
+                radial-gradient(at 90% 90%, rgba(255, 200, 150, 0.08) 0%, transparent 70%);
+
+            border-radius: 15px 30px 20px 10px; /* Irregularly rounded corners for an organic feel */
+            
+            /* Layered shadows for depth and slight irregularity (scuffs/imperfections) */
+            box-shadow: 
+                0 5px 15px rgba(0,0,0,0.15), /* Main soft shadow */
+                inset 0 0 10px rgba(0,0,0,0.05), /* Inner shadow for subtle texture */
+                2px 2px 5px rgba(0,0,0,0.05), /* Simulates very slight imperfections on edges */
+                -2px -2px 5px rgba(0,0,0,0.03); /* Opposite side imperfections */
+
+            filter: sepia(0.08) saturate(1.1) contrast(1.05); /* Combined filters for aged look */
+            
+            /* Remove the previous border-left */
+            border-left: none; 
+        }
+        
+        .birthday-wishes p { margin-bottom: 15px; }
+        .birthday-wishes p:last-child { margin-bottom: 0; }
+        .birthday-wishes ul { list-style: none; padding-left: 0; }
+        .birthday-wishes li { margin-bottom: 10px; display: flex; align-items: center; }
+        .birthday-wishes li::before { content: '💖'; margin-right: 10px; font-family: 'Poppins', sans-serif; } /* Keep emoji font consistent */
+
+
+        .signature {
+            margin-top: 30px;
+            text-align: right;
+            font-family: 'Dancing Script', cursive;
+            font-size: 22px;
+            color: #a16207;
+        }
+        
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0,0,0,0.2);
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .close-btn:hover {
+            background: rgba(0,0,0,0.4);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+
+        /* --- ANIMATION STATES --- */
+        .container.opening .envelope-flap {
+            transform: rotateX(180deg);
+        }
+        .container.opening .seal {
+            transform: translateX(-50%) scale(0);
+            opacity: 0;
+        }
+        .container.opening .click-prompt {
+            opacity: 0;
+        }
+        
+        /* State 2: Letter slides out, envelope falls */
+        .container.letter-out .envelope-wrapper {
+            transform: translateY(300px) rotateX(-30deg) rotateZ(15deg);
+            opacity: 0;
+        }
+        .container.letter-out .letter {
+            transform: translateY(-150px) scale(0.6);
+            opacity: 1;
+        }
+
+        /* State 3: Letter is fully open and centered */
+        .container.letter-open .letter {
+            transform: translateY(0) scale(1.1); /* Slightly larger for focus */
+            opacity: 1;
+            z-index: 20;
+        }
+
+        .container.letter-open .close-btn {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                width: 340px;
+                height: 240px;
+            }
+            .envelope-wrapper {
+                width: 340px;
+                height: 240px;
+            }
+            .container.letter-open .letter {
+                transform: translateY(0) scale(1);
+                width: 95vw;
+                height: 85vh;
+            }
+            .letter-title { font-size: 36px; }
+            .letter-subtitle { font-size: 18px; }
+            .letter-content { font-size: 14px; }
+            .birthday-wishes { font-size: 18px; } /* Adjust for smaller screens */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hidden audio element for background music -->
+    <audio id="backgroundMusic" preload="auto" loop>
+        <!-- 
+            IMPORTANT: Cloud storage links (like Google Drive or Dropbox shared links) 
+            are generally NOT reliable for direct audio playback in web pages 
+            due to cross-origin policies and serving limitations.
+            
+            This Dropbox URL is modified with '?dl=1' which sometimes helps, 
+            but it might still be blocked by browsers or trigger a download.
+            
+            For robust and reliable playback, it is HIGHLY RECOMMENDED to host your MP3 file 
+            on a proper web server, GitHub Pages, or a CDN.
+            Replace the 'src' attribute below with your direct audio file URL if you host it elsewhere.
+        -->
+        <source src="https://www.dropbox.com/scl/fi/b6aqcx5ydpjnqfrrrrrsr/Happy-Birthday-to-you.mp3?rlkey=0dz3gvqc8p3qi91h3rrxliqsa&st=25y50wcv&dl=1" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="background-particles"></div>
+    
+    <div class="container" id="container">
+
+        <div class="envelope-wrapper" id="envelopeWrapper">
+            <div class="envelope"></div>
+            <div class="envelope-flap"></div>
+            <div class="seal">O</div>
+            <div class="click-prompt" id="clickPrompt">Click to Open</div>
+        </div>
+        
+        <div class="letter" id="letter">
+            <div class="letter-header">
+                <h1 class="letter-title">Happy Birthday!</h1>
+                <h2 class="letter-subtitle">Dear Olena Leonidivna,</h2>
+            </div>
+            
+            <div class="letter-content">
+                <div class="birthday-wishes">
+                    <p>Hello! Happy Birthday to you! 🎉</p>
+                    
+                    <p>I wish you to be it one of the best days of your life. You are a wonderful teacher!</p>
+                    
+                    <p>For your new year, I wish you:</p>
+                     <ul>
+                        <li>Many easy days!</li>
+                        <li>Lots of happiness and good health!</li>
+                        <li>Only obedient students! (that's me, sometimes...)</li>
+                        <li>No difficult homework to check!</li>
+                    </ul>
+                    <p>I wish you all your wishes come true!</p>
+                </div>
+                
+                <div class="signature">
+                    <p>Best wishes,<br>
+                    <strong>Your student, Oleksandr Annenkov</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <button class="close-btn" id="closeBtn">×</button>
+
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const envelopeWrapper = document.getElementById('envelopeWrapper');
+        const closeBtn = document.getElementById('closeBtn');
+        const clickPrompt = document.getElementById('clickPrompt');
+        const backgroundMusic = document.getElementById('backgroundMusic'); // Get reference to audio element
+
+        let isAnimating = false;
+        let isOpen = false;
+
+        // --- EVENT LISTENERS ---
+        // Music and animation both start on clicking the envelope wrapper
+        envelopeWrapper.addEventListener('click', () => {
+            if (!isOpen && !isAnimating) {
+                openEnvelope();
+            }
+        });
+
+        closeBtn.addEventListener('click', () => {
+            if (isOpen && !isAnimating) {
+                closeEnvelope();
+            }
+        });
+
+        // --- ANIMATION & MUSIC LOGIC ---
+        function openEnvelope() {
+            isAnimating = true;
+            
+            // 1. Play music
+            backgroundMusic.volume = 0.4; // Set a comfortable volume (0.0 to 1.0)
+            backgroundMusic.play().catch(e => {
+                // Autoplay might be blocked by browser (e.g., if no prior user interaction on page).
+                // Log error but continue animation.
+                console.warn("Music playback prevented:", e); 
+            });
+            
+            // 2. Start opening flap
+            container.classList.add('opening');
+            
+            // 3. After flap animation, slide letter out and drop envelope
+            setTimeout(() => {
+                container.classList.add('letter-out');
+                
+                // 4. After letter slides out, expand it to full view
+                setTimeout(() => {
+                    container.classList.add('letter-open');
+                    isAnimating = false;
+                    isOpen = true;
+                }, 1000); // This delay should match the transition duration for letter-out
+            }, 800); // Delay for flap to open animation
+            
+            // Trigger confetti
+            setTimeout(createConfetti, 1200); // Sync confetti burst with letter expanding
+        }
+
+        function closeEnvelope() {
+            isAnimating = true;
+            
+            // Pause and reset music
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0; // Rewind to start
+
+            // Reverse the animation sequence
+            container.classList.remove('letter-open');
+
+            setTimeout(() => {
+                container.classList.remove('letter-out');
+                
+                setTimeout(() => {
+                    container.classList.remove('opening');
+                    
+                    setTimeout(() => {
+                        isAnimating = false;
+                        isOpen = false;
+                    }, 1000); // cleanup delay after envelope returns to original state
+                }, 500); // Matches transition duration for letter returning (letter-out class removal)
+            }, 500); // Matches transition duration for letter-open class removal
+        }
+
+        // --- PARTICLE EFFECTS ---
+        function createBackgroundParticles() {
+            const particleContainer = document.querySelector('.background-particles');
+            const particleCount = 70;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 5 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+                particleContainer.appendChild(particle);
+            }
+        }
+        
+        function createConfetti() {
+            const confettiContainer = document.body;
+            const colors = ['#d8b4fe', '#fecdd3', '#fbbf24', '#ffffff'];
+            const confettiCount = 100;
+
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = `${Math.random() * -50}vh`; /* Start above viewport */
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.zIndex = '1000';
+
+                const size = Math.random() * 8 + 4;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.opacity = '1';
+                
+                if (Math.random() > 0.5) {
+                    confetti.style.borderRadius = '50%'; /* Half are circles */
+                }
+                
+                const animation = confetti.animate([
+                    { transform: `translate3d(0, 0, 0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate3d(${Math.random() * 400 - 200}px, 120vh, 0) rotate(${Math.random() * 720}deg)`, opacity: 0 } /* Fall and rotate */
+                ], {
+                    duration: Math.random() * 2000 + 3000, /* 3 to 5 seconds */
+                    easing: 'cubic-bezier(0.1, 0.5, 0.5, 1)', /* Fast start, slow end */
+                    delay: Math.random() * 500 /* Stagger start */
+                });
+                
+                animation.onfinish = () => confetti.remove();
+                confettiContainer.appendChild(confetti);
+            }
+        }
+
+        // Parallax effect on mouse move
+        document.addEventListener('mousemove', (e) => {
+            if (!isOpen) { // Only apply parallax when the envelope is closed
+                const x = (e.clientX - window.innerWidth / 2);
+                const y = (e.clientY - window.innerHeight / 2);
+                container.style.transform = `rotateY(${x * 0.03}deg) rotateX(${-y * 0.03}deg)`;
+            } else {
+                // When open, reset the parallax transform to prevent weird behavior
+                container.style.transform = `none`;
+            }
+        });
+
+        // Initialize background particles on load
+        createBackgroundParticles();
+    </script>
+</body>
+</html>
